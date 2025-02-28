@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volt-History</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; padding: 20px; }
+        h1 { color: #333; }
+        #container { max-width: 400px; margin: auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+        img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+        button:hover { background: #0056b3; }
+        input { padding: 8px; width: 200px; margin: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    </style>
+</head>
+<body>
 
+    <h1>🔍 Volt-History: Explore Great Historians</h1>
+    
+    <button onclick="getRandomHistorian()">🔀 Random Historian</button>
+    <input type="text" id="searchInput" placeholder="Search by name...">
+    <button onclick="searchHistorian()">🔎 Search</button>
+
+    <div id="container">
+        <h2 id="name">Name: -</h2>
+        <img id="image" src="" alt="Historian Image" style="display:none;">
+        <p><strong>📍 Birth:</strong> <span id="birth">-</span></p>
+        <p><strong>🪦 Death:</strong> <span id="death">-</span></p>
+        <p><strong>🌎 Impact:</strong> <span id="impact">-</span></p>
+    </div>
+
+    <script>
+        const API_URL = "https://voltagelord-volt-history.hf.space"; // Your API Base URL
+
+        async function getRandomHistorian() {
+            try {
+                let response = await fetch(API_URL + "/person");
+                let data = await response.json();
+                displayHistorian(data);
+            } catch (error) {
+                alert("Error fetching historian!");
+            }
+        }
+
+        async function searchHistorian() {
+            let name = document.getElementById("searchInput").value;
+            if (!name) {
+                alert("Please enter a historian's name!");
+                return;
+            }
+
+            try {
+                let response = await fetch(API_URL + "/person/search?name=" + encodeURIComponent(name));
+                let data = await response.json();
+
+                if (data.error) {
+                    alert("Historian not found!");
+                } else {
+                    displayHistorian(data);
+                }
+            } catch (error) {
+                alert("Error searching historian!");
+            }
+        }
+
+        function displayHistorian(data) {
+            document.getElementById("name").innerText = "Name: " + data.name;
+            document.getElementById("birth").innerText = data.birth;
+            document.getElementById("death").innerText = data.death;
+            document.getElementById("impact").innerText = data.impact;
+
+            let image = document.getElementById("image");
+            image.src = data.image;
+            image.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
